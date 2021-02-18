@@ -19,7 +19,7 @@ install.packages('devtools')
 Next, install the GCAMdashboard
 package:
 ```R
-devtools::install_github('cypressf/EPPADashboard', ref = "main")
+devtools::install_github('cypressf/EPPADashboard', ref = "climate-outlook")
 ```
 This should install all of the required packages that the GCAM
 Dashboard needs to operate for you automatically.
