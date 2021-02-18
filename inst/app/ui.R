@@ -10,7 +10,6 @@ shinyUI(fluidPage(theme="style.css",
   # Sidebar with user controls
   sidebarLayout(
     sidebarPanel(
-      fileInput('projectFile', 'EPPA Project Data File'),
       selectInput('plotScenario', 'Select Scenario to Plot', choices=list()),
       selectInput('plotQuery', 'Select Data to Plot', choices=list()),
       checkboxInput('diffCheck', 'Plot Difference vs Another Scenario'),
