@@ -119,7 +119,7 @@ loadRegionColors <- function(file) {
 loadSectorColors <- function(file) {
   read_excel(file,
              sheet = "colormap",
-             cell_cols("B:C"),
+             cell_cols("A:B"),
              col_names = c("sector", "color")) %>%
     mutate(sector = as.factor(sector))
 }
