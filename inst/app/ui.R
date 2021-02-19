@@ -16,7 +16,8 @@ shinyUI(fluidPage(theme="style.css",
       conditionalPanel(
         condition = "input.diffCheck == true",
         selectInput('diffScenario', 'Select Difference Scenario', choices=list())
-      )
+      ),
+      img(src = "EPPA_regions.png", width = "100%"),
     ),
 
     # main display area
