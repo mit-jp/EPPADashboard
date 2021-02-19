@@ -19,14 +19,17 @@ last.region.filter <- NULL
 #' Load default data into UI
 #'
 #' Returns the data from the default data file
+#'
+#' @param regionsSettings the region to region group mappings
+#'
 #' @export
-loadDefault <- function()
+loadDefault <- function(regionSettings)
 {
   filenames <- list.files("./data")
   data <- list()
 
   for (filename in filenames) {
-    data[[scenarioName(filename)]] <- loadProject2(file.path('./data', filename))
+    data[[scenarioName(filename)]] <- loadProject2(file.path('./data', filename), regionSettings)
   }
 
   data
@@ -45,9 +48,9 @@ loadDefaultProjectSettings <- function()
 #'
 #' Returns the region colors from the default project file
 #' @export
-loadDefaultRegionColors <- function()
+loadDefaultRegionSettings <- function()
 {
-  loadRegionColors('./data/Reference.xls')
+  loadRegionSettings('./data/Reference.xls')
 }
 
 #' Load the default sector colors
@@ -63,15 +66,16 @@ loadDefaultSectorColors <- function()
 #'
 #' Returns the data from the project file, if valid
 #' @param projFile Path to the project file
+#' @param regionSettings mapping from region to region group
 #' @export
-loadProject2 <- function(projFile)
+loadProject2 <- function(projFile, regionSettings)
 {
     if (is.character(projFile)) {
         if (file.exists(projFile)) {
             if (file.access(projFile, mode = 6) != 0) {
                 stop("File ", projFile, " exists but lacks either read or write permission.")
             }
-            prjdata <- readFromExcel(projFile)
+            prjdata <- readFromExcel(projFile, regionSettings)
         }
         else {
             prjdata <- list()
@@ -106,13 +110,14 @@ loadProjectSettings <- function(file) {
       distinct(query, .keep_all = TRUE)
 }
 
-loadRegionColors <- function(file) {
+loadRegionSettings <- function(file) {
   read_excel(file,
              sheet = "rgroup",
              cell_cols("A:C"),
              col_names = c("region", "group", "color")) %>%
     mutate(region = str_replace_all(region, "_", " ")) %>%
     mutate(region = as.factor(region)) %>%
+    mutate(group = str_replace_all(group, "_", " ")) %>%
     mutate(group = as.factor(group))
 }
 
@@ -124,7 +129,7 @@ loadSectorColors <- function(file) {
     mutate(sector = as.factor(sector))
 }
 
-readFromExcel <- function(file) {
+readFromExcel <- function(file, regionSettings) {
     scenario_name <- scenarioName(file)
     data <- read_excel(file,
                        col_types = c("guess", "text", "text", "guess", "guess", "guess", "text"),
@@ -143,7 +148,15 @@ readFromExcel <- function(file) {
 
     # Replace _ with space in region names
     # GAMS cannot output region names with spaces in them, but we want them to be human-readable
-    data <- mutate(data, region = str_replace_all(region, "_", " "))
+    data <- data %>%
+            mutate(region = str_replace_all(region, "_", " ")) %>%
+            mutate(region = as.factor(region))
+
+
+    # Add region groups from the region -> region group mappings
+    regionSettings <- regionSettings %>% select(region, group)
+    data <- data %>% left_join(regionSettings)
+
 
     # split single table into list of tables, named by variable
     # See https://stackoverflow.com/questions/57107721/how-to-name-the-list-of-the-group-split-output-in-dplyr
@@ -398,6 +411,16 @@ getRegionColorPalette <- function(regionColors)
   color_palette
 }
 
+getGroupColorPalette <- function(regionSettings)
+{
+  group_colors <- regionSettings %>%
+    group_by(group) %>%
+    summarize(color = first(color))
+  color_palette <- group_colors$color
+  names(color_palette) <- group_colors$group
+  color_palette
+}
+
 getSectorColorPalette <- function(sectorColors)
 {
   color_palette <- sectorColors$color
@@ -420,7 +443,7 @@ getSectorColorPalette <- function(sectorColors)
 #' @importFrom magrittr "%>%"
 #' @importFrom ggplot2 ggplot aes_string geom_bar geom_line theme_minimal ylab scale_fill_manual scale_color_manual
 #' @export
-plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filter, rgns, regionColors, sectorColors)
+plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filter, rgns, regionSettings, sectorColors)
 {
     if(is.null(prjdata)) {
       list(plot = default.plot())
@@ -460,10 +483,12 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
                                               NULL, NULL)
             subcategory_values <- getSubcategoryValues(unfiltered_pltdata, subcatvar)
 
-            if (subcatvar != "region") {
-              color_palette <- getSectorColorPalette(sectorColors)
+            if (subcatvar == "group") {
+              color_palette <- getGroupColorPalette(regionSettings)
+            } else if (subcatvar == "region") {
+              color_palette <- getRegionColorPalette(regionSettings)
             } else {
-              color_palette <- getRegionColorPalette(regionColors)
+              color_palette <- getSectorColorPalette(sectorColors)
             }
 
             plt <- plt +

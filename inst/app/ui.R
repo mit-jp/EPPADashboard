@@ -28,7 +28,7 @@ shinyUI(fluidPage(theme="style.css",
       barChartHoverUI("timePlot"),
       conditionalPanel(
         condition = "output.show_breakdown_input",
-        selectInput('subcategorySelect', 'Break plot down by:', choices=c('none','region'))
+        selectInput('subcategorySelect', 'Break plot down by:', choices=c('none','region', 'region group'))
       ),
       checkboxInput('tvFilterCheck', 'Limit plot to selected regions'),
       checkboxGroupInput('tvRgns', 'Regions', choices=c())
