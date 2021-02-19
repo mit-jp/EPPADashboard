@@ -164,6 +164,19 @@ shinyServer(function(input, output, session) {
         plt$plot
     })
 
+    output$region_controls <- renderUI({
+        prj <- rFileinfo()$project.data
+        scen <- input$plotScenario
+        query <- input$plotQuery
+        if(uiStateValid(prj, scen, query)) {
+            tbl <- getQuery(prj,query,scen)
+            rgns <- unique(tbl$region) %>% sort
+            checkboxGroupInput("tvRgns", "Regions", choices = rgns, selected = last.region.filter)
+        } else {
+            checkboxGroupInput("tvRgns", "Regions")
+        }
+    })
+
     output$show_breakdown_input <- reactive({
         settings <- rFileinfo()$project.settings
         query <- input$plotQuery
@@ -171,17 +184,6 @@ shinyServer(function(input, output, session) {
         plot_type != "line"
     })
 
-    observe({
-        prj <- rFileinfo()$project.data
-        scen <- input$plotScenario
-        query <- input$plotQuery
-        if(uiStateValid(prj, scen, query)) {
-            tbl <- getQuery(prj,query,scen)
-            rgns <- unique(tbl$region) %>% sort
-            updateCheckboxGroupInput(session, 'tvRgns', choices = rgns,
-                                     selected = last.region.filter)
-        }
-    })
     # Debugging
     observe({
         print('****************Change of Input****************')
