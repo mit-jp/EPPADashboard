@@ -13,7 +13,7 @@ plotTime(
   subcatvar,
   filter,
   rgns,
-  regionColors,
+  regionSettings,
   sectorColors
 )
 }
@@ -34,9 +34,9 @@ plotTime(
 
 \item{rgns}{Regions to filter to, if filter is TRUE.}
 
-\item{regionColors}{Region colors to use, if plotting by region}
-
 \item{sectorColors}{Sector colors to use, if plotting by sector}
+
+\item{regionColors}{Region colors to use, if plotting by region}
 }
 \description{
 Plot values over time as a bar chart

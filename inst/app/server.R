@@ -29,13 +29,13 @@ shinyServer(function(input, output, session) {
     rFileinfo <- reactive({
         fileinfo <- input$projectFile
         project.settings <- loadDefaultProjectSettings()
-        project.regionColors <- loadDefaultRegionColors()
+        project.regionSettings <- loadDefaultRegionSettings()
         project.sectorColors <- loadDefaultSectorColors()
-        project.data <- loadDefault()
+        project.data <- loadDefault(project.regionSettings)
 
 
         if(!is.null(fileinfo)) {
-            extraData <- loadProject2(fileinfo$datapath)
+            extraData <- loadProject2(fileinfo$datapath, project.regionSettings)
             extraScenario <- attr(extraData, "scenario_name")
             project.data[[extraScenario]] <- extraData
         }
@@ -43,7 +43,7 @@ shinyServer(function(input, output, session) {
         updateSelectInput(session, 'scenarioInput', choices=rev(listScenarios(project.data)))
         list(project.data=project.data,
              project.settings=project.settings,
-             project.regionColors=project.regionColors,
+             project.regionSettings=project.regionSettings,
              project.sectorColors=project.sectorColors)
     })
 
@@ -134,7 +134,7 @@ shinyServer(function(input, output, session) {
     output$timePlot <- renderPlot({
         prj <- rFileinfo()$project.data
         settings <- rFileinfo()$project.settings
-        regionColors <- rFileinfo()$project.regionColors
+        regionSettings <- rFileinfo()$project.regionSettings
         sectorColors <- rFileinfo()$project.sectorColors
         scen <- input$plotScenario
         query <- input$plotQuery
@@ -159,7 +159,7 @@ shinyServer(function(input, output, session) {
         }
 
         plt <- plotTime(prj, plot_type, query, scen, diffscen, subcategorySelect,
-                 input$tvFilterCheck, region.filter, regionColors, sectorColors)
+                 input$tvFilterCheck, region.filter, regionSettings, sectorColors)
         timePlot.df(plt$plotdata)
         plt$plot
     })

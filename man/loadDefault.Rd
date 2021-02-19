@@ -4,7 +4,10 @@
 \alias{loadDefault}
 \title{Load default data into UI}
 \usage{
-loadDefault()
+loadDefault(regionSettings)
+}
+\arguments{
+\item{regionsSettings}{the region to region group mappings}
 }
 \description{
 Returns the data from the default data file

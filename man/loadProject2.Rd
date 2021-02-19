@@ -4,10 +4,12 @@
 \alias{loadProject2}
 \title{Load a file into the UI}
 \usage{
-loadProject2(projFile)
+loadProject2(projFile, regionSettings)
 }
 \arguments{
 \item{projFile}{Path to the project file}
+
+\item{regionSettings}{mapping from region to region group}
 }
 \description{
 Returns the data from the project file, if valid
