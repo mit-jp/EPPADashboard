@@ -5,7 +5,7 @@ library(GCAMdashboard)
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(theme="style.css",
   # Application title
-  titlePanel("EPPA Dashboard"),
+  titlePanel("MIT Joint Program Outlook Dashboard"),
 
   # Sidebar with user controls
   sidebarLayout(
