@@ -116,7 +116,6 @@ loadRegionSettings <- function(file) {
              cell_cols("A:C"),
              col_names = c("region", "group", "color")) %>%
     mutate(region = str_replace_all(region, "_", " ")) %>%
-    mutate(region = as.factor(region)) %>%
     mutate(group = str_replace_all(group, "_", " ")) %>%
     mutate(group = as.factor(group))
 }
@@ -148,15 +147,13 @@ readFromExcel <- function(file, regionSettings) {
 
     # Replace _ with space in region names
     # GAMS cannot output region names with spaces in them, but we want them to be human-readable
-    data <- data %>%
-            mutate(region = str_replace_all(region, "_", " ")) %>%
-            mutate(region = as.factor(region))
-
+    data <- data %>% mutate(region = str_replace_all(region, "_", " "))
 
     # Add region groups from the region -> region group mappings
     regionSettings <- regionSettings %>% select(region, group)
-    data <- data %>% left_join(regionSettings)
-
+    data <- data %>%
+      left_join(regionSettings) %>%
+      rename("region group" = group)
 
     # split single table into list of tables, named by variable
     # See https://stackoverflow.com/questions/57107721/how-to-name-the-list-of-the-group-split-output-in-dplyr
@@ -483,7 +480,7 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
                                               NULL, NULL)
             subcategory_values <- getSubcategoryValues(unfiltered_pltdata, subcatvar)
 
-            if (subcatvar == "group") {
+            if (subcatvar == "region group") {
               color_palette <- getGroupColorPalette(regionSettings)
             } else if (subcatvar == "region") {
               color_palette <- getRegionColorPalette(regionSettings)
