@@ -41,7 +41,7 @@ loadDefault <- function(regionSettings)
 #' @export
 loadDefaultProjectSettings <- function()
 {
-  loadProjectSettings('./data/ParisForever.xlsx')
+  loadProjectSettings('./data/ParisForever.xls')
 }
 
 #' Load the default region colors
@@ -50,7 +50,7 @@ loadDefaultProjectSettings <- function()
 #' @export
 loadDefaultRegionSettings <- function()
 {
-  loadRegionSettings('./data/ParisForever.xlsx')
+  loadRegionSettings('./data/ParisForever.xls')
 }
 
 #' Load the default sector colors
@@ -59,7 +59,17 @@ loadDefaultRegionSettings <- function()
 #' @export
 loadDefaultSectorColors <- function()
 {
-  loadSectorColors('./data/ParisForever.xlsx')
+  loadSectorColors('./data/ParisForever.xls')
+}
+
+
+#' Load the default sector colors
+#'
+#' Returns the sector colors from the default project file
+#' @export
+loadDefaultGroupColors <- function()
+{
+  loadGroupColors('./data/ParisForever.xls')
 }
 
 #' Load a file into the UI
@@ -126,6 +136,14 @@ loadSectorColors <- function(file) {
              cell_cols("A:B"),
              col_names = c("sector", "color")) %>%
     mutate(sector = as.factor(sector))
+}
+
+loadGroupColors <- function(file) {
+  read_excel(file,
+             sheet = "groupcolormap",
+             cell_cols("A:B"),
+             col_names = c("group", "color")) %>%
+    mutate(group = as.factor(group))
 }
 
 readFromExcel <- function(file, regionSettings) {
@@ -408,13 +426,10 @@ getRegionColorPalette <- function(regionColors)
   color_palette
 }
 
-getGroupColorPalette <- function(regionSettings)
+getGroupColorPalette <- function(groupColors)
 {
-  group_colors <- regionSettings %>%
-    group_by(group) %>%
-    summarize(color = first(color))
-  color_palette <- group_colors$color
-  names(color_palette) <- group_colors$group
+  color_palette <- groupColors$color
+  names(color_palette) <- groupColors$group
   color_palette
 }
 
@@ -437,10 +452,11 @@ getSectorColorPalette <- function(sectorColors)
 #' @param rgns  Regions to filter to, if filter is TRUE.
 #' @param regionColors Region colors to use, if plotting by region
 #' @param sectorColors Sector colors to use, if plotting by sector
+#' @param groupColors Group colors to use, if plotting by group
 #' @importFrom magrittr "%>%"
 #' @importFrom ggplot2 ggplot aes_string geom_bar geom_line theme_minimal ylab scale_fill_manual scale_color_manual
 #' @export
-plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filter, rgns, regionSettings, sectorColors)
+plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filter, rgns, regionSettings, sectorColors, groupColors)
 {
     if(is.null(prjdata)) {
       list(plot = default.plot())
@@ -481,7 +497,7 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
             subcategory_values <- getSubcategoryValues(unfiltered_pltdata, subcatvar)
 
             if (subcatvar == "region group") {
-              color_palette <- getGroupColorPalette(regionSettings)
+              color_palette <- getGroupColorPalette(groupColors)
             } else if (subcatvar == "region") {
               color_palette <- getRegionColorPalette(regionSettings)
             } else {

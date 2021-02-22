@@ -14,7 +14,8 @@ plotTime(
   filter,
   rgns,
   regionSettings,
-  sectorColors
+  sectorColors,
+  groupColors
 )
 }
 \arguments{
@@ -35,6 +36,8 @@ plotTime(
 \item{rgns}{Regions to filter to, if filter is TRUE.}
 
 \item{sectorColors}{Sector colors to use, if plotting by sector}
+
+\item{groupColors}{Group colors to use, if plotting by group}
 
 \item{regionColors}{Region colors to use, if plotting by region}
 }
