@@ -387,20 +387,6 @@ summarize.unit <- function(unitcol)
     unitcol[which.max(table(unitcol))]
 }
 
-getSubcategoryValues <- function(df, subcategory_name)
-{
-    subcategory_values <- unique(df[[subcategory_name]])
-    subcategory_values
-}
-
-getColorPalette <- function(subcategory_values)
-{
-    set.seed(1890)
-    color_palette <- distinctColorPalette(length(subcategory_values))
-    names(color_palette) <- sort(subcategory_values)
-    color_palette
-}
-
 getRegionColorPalette <- function(regionColors)
 {
   color_palette <- regionColors$color
@@ -475,10 +461,6 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
         }
 
         if(!is.null(subcatvar)) {
-            # need to get unfiltered plot data in order to determine the proper color scheme for subcategory breakdowns
-            unfiltered_pltdata <- getPlotData(prjdata, query, scen, diffscen, subcatvar,
-                                              NULL, NULL)
-            subcategory_values <- getSubcategoryValues(unfiltered_pltdata, subcatvar)
 
             if (subcatvar == "region group") {
               color_palette <- getGroupColorPalette(regionSettings)
