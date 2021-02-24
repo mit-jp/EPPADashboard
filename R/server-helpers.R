@@ -372,6 +372,7 @@ getPlotData <- function(prjdata, query, pltscen, diffscen, key, filtervar=NULL,
     ## most of its entries were zero. Fix these so that the column all has the
     ## same unit.
     tp$Units <- summarize.unit(tp$Units)
+    tp <- tp %>% filter(value != 0)
     tp
 }
 
