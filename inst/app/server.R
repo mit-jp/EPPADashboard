@@ -133,7 +133,8 @@ shinyServer(function(input, output, session) {
         getScenarioQueries(rFileinfo, input$scenarioInput, concat='\n')
     })
 
-    output$timePlot <- renderPlot({
+    getTimePlot <- function()
+    {
         prj <- rFileinfo()$project.data
         settings <- rFileinfo()$project.settings
         regionSettings <- rFileinfo()$project.regionSettings
@@ -162,9 +163,13 @@ shinyServer(function(input, output, session) {
         }
 
         plt <- plotTime(prj, plot_type, query, scen, diffscen, subcategorySelect,
-                 input$tvFilterCheck, region.filter, regionSettings, sectorColors, groupColors)
+                        input$tvFilterCheck, region.filter, regionSettings, sectorColors, groupColors)
         timePlot.df(plt$plotdata)
         plt$plot
+    }
+
+    output$timePlot <- renderPlot({
+        getTimePlot()
     })
 
     output$region_controls <- renderUI({
@@ -186,6 +191,15 @@ shinyServer(function(input, output, session) {
         plot_type <- filter(settings, query == !!query)$type
         plot_type != "line"
     })
+
+    output$download_plot <- downloadHandler(
+        filename = function() {
+            "plot.png"
+        },
+        content = function(file) {
+            plotPNG(function(){print(getTimePlot())}, filename = file, res = 150, width = 1000, height = 600)
+        }
+    )
 
     # Debugging
     observe({

@@ -6,6 +6,10 @@
   line-height: 10px;
 }
 
+#download_plot {
+  margin-bottom:1em;
+}
+
 .blurb {
   margin-top:1em;
 }
