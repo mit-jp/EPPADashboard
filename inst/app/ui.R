@@ -32,7 +32,7 @@ shinyUI(fluidPage(theme="style.css",
         selectInput('subcategorySelect', 'Break plot down by:', choices=c('none','region', 'region group'))
       ),
       checkboxInput('tvFilterCheck', 'Limit plot to selected regions'),
-      checkboxGroupInput('tvRgns', 'Regions', choices=c())
+      uiOutput("region_controls"),
     ) #  main Panel
   )   # sidebar layout
 ))
