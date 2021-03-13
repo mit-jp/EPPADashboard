@@ -171,12 +171,22 @@ shinyServer(function(input, output, session) {
 
     output$region_controls <- renderUI({
         prj <- rFileinfo()$project.data
+        regionSettings <- rFileinfo()$project.regionSettings %>%
+            select(region, group)
         scen <- input$plotScenario
         query <- input$plotQuery
         if(uiStateValid(prj, scen, query)) {
             tbl <- getQuery(prj,query,scen)
-            rgns <- unique(tbl$region) %>% sort
-            checkboxGroupInput("tvRgns", "Regions", choices = rgns, selected = last.region.filter)
+            regions <- unique(tbl$region) %>% sort
+            # Tibble with two columns: (group, region)
+            # group is name of group
+            # region is list of regions
+            regions_by_group <- tibble(region = regions) %>%
+                left_join(regionSettings) %>%
+                group_by(group) %>%
+                summarize(region = list(region)) %>%
+                mutate(group = as.character(group))
+            checkboxMultiGroupInput("tvRgns", choicesByLabel = regions_by_group, selected = last.region.filter)
         } else {
             checkboxGroupInput("tvRgns", "Regions")
         }
