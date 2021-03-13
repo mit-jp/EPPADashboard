@@ -495,3 +495,17 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
         return(list(plot = plt, plotdata = pltdata))
     }
 }
+
+#' A group of checkboxes divided by sub-labels
+#' @param variable The name of the input group
+#' @param choicesByLabel The choices indexed by label
+#' @param selected  Name of the query to plot
+#' @export
+checkboxMultiGroupInput <- function(variable, choicesByLabel = NULL, selected = NULL)
+{
+  div(id = variable, class = "form-group shiny-input-checkboxgroup shiny-input-container shiny-bound-input",
+      choicesByLabel %>% pmap(function(group, region) {
+        checkboxGroupInput("tvRgns", group, choices = region, selected = selected)
+      })
+  )
+}
