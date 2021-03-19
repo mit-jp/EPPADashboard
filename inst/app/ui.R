@@ -22,10 +22,13 @@ shinyUI(fluidPage(theme="style.css",
 
     # main display area
     mainPanel(
-      plotOutput('timePlot',
-                 height='600px',
-                 hover = hoverOpts("exploreHover", delay = 50, delayType = 'throttle')),
-      barChartHoverUI("timePlot"),
+      div(
+        class = "hoverContainer",
+        plotOutput('timePlot',
+                   height='600px',
+                   hover = hoverOpts("exploreHover", delay = 50, delayType = 'throttle')),
+        barChartHoverUI("timePlot"),
+      ),
       downloadButton(outputId = "download_plot", label = "Download plot"),
       conditionalPanel(
         condition = "output.show_breakdown_input",
