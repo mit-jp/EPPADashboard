@@ -24,6 +24,7 @@ shinyServer(function(input, output, session) {
     # the time plot view and the map plot view. These data frames are used for
     # getting hover values and for viewing the raw table data.
     timePlot.df <- reactiveVal()
+    timePlot.plot_type <- reactiveVal()
 
     ## Get the new data file on upload
     rFileinfo <- reactive({
@@ -162,6 +163,7 @@ shinyServer(function(input, output, session) {
         plt <- plotTime(prj, plot_type, query, scen, diffscen, subcategorySelect,
                         input$tvFilterCheck, region.filter, regionSettings, sectorColors)
         timePlot.df(plt$plotdata)
+        timePlot.plot_type(plot_type)
         plt$plot
     }
 
@@ -224,6 +226,7 @@ shinyServer(function(input, output, session) {
         "timePlot",
         reactive(input$exploreHover),
         reactive(timePlot.df()),
+        reactive(timePlot.plot_type()),
         reactive(input$subcategorySelect)
     )
 })
