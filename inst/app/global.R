@@ -2,7 +2,7 @@
 
 barChartHoverUI <- function(id) {
   ns <- NS(id)
-  uiOutput(ns('hoverInfo'))
+  uiOutput(ns('hoverInfo'), style = "pointer-events: none")
 }
 
 barChartHover <- function(input, output, session, hover, data, subcategory) {
@@ -14,27 +14,12 @@ barChartHover <- function(input, output, session, hover, data, subcategory) {
     val <- calculateHoverValue(hover, df, subcat)
     if(is.null(val)) return(NULL)
 
+    style <- paste0("left:", hover$coords_css$x, "px; top:", hover$coords_css$y, "px;")
 
-    # Calculate point position INSIDE the image as percent of total dimensions
-    # from left (horizontal) and from top (vertical)
-    left_pct <- (hover$x - hover$domain$left) / (hover$domain$right - hover$domain$left)
-    top_pct <- (hover$domain$top - hover$y) / (hover$domain$top - hover$domain$bottom)
-
-    # Calculate distance from left and bottom side of the picture in pixels
-    left_px <- left_pct * (hover$range$right - hover$range$left) + hover$range$left
-    top_px <- top_pct * (hover$range$bottom - hover$range$top) + hover$range$top
-
-    left <- round(left_px) - 30
-    top <- round(top_px) - 30
-    if(left < 0 || top < 0) return(NULL)
-
-    # Hover tooltip is created as absolutePanel
-    absolutePanel(
+    wellPanel(
+      style = style,
       class = 'hoverPanel',
-      left = paste0(left, "px"),
-      top = paste0(top, "px"),
       p(HTML(val)))
-
   })
 }
 
