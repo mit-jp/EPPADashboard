@@ -372,19 +372,21 @@ getPlotData <- function(prjdata, query, pltscen, diffscen, key, filtervar=NULL,
       if (any(is.na(tp$order)) || key != "sector") {
         # Do not enforce any special ordering unless we're breaking down by sector and have
         # numbers in the order column
-        tp <- dplyr::group_by_(tp, key, 'year', 'Units') %>%
-              dplyr::summarise(value = sum(value))
+        tp <- tp %>%
+          group_by(!!! syms(key), year, Units) %>%
+          summarise(value = sum(value))
       } else {
         ordered_subcategories <- unique(arrange(tp, desc(order))[[key]])
         tp <- tp %>%
-          dplyr::mutate(!!key := factor(!!key, levels = ordered_subcategories, ordered = TRUE))
-          dplyr::group_by_(tp, key, 'year', 'Units') %>%
-          dplyr::summarise(value = sum(value), order = first(order))
+          mutate(!!key := factor(!!key, levels = ordered_subcategories, ordered = TRUE)) %>%
+          group_by(!!key, year, Units) %>%
+          summarise(value = sum(value), order = first(order))
       }
     }
     else {
-      tp <- dplyr::group_by_(tp, 'year', 'Units') %>%
-            dplyr::summarise(value = sum(value))
+      tp <- tp %>%
+        group_by(year, Units) %>%
+        summarise(value = sum(value))
     }
     ## Occasionally you get a region with "0.0" for the unit string because
     ## most of its entries were zero. Fix these so that the column all has the
