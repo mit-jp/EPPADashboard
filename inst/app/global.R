@@ -2,7 +2,7 @@
 
 barChartHoverUI <- function(id) {
   ns <- NS(id)
-  uiOutput(ns('hoverInfo'))
+  uiOutput(ns('hoverInfo'), style = "pointer-events: none")
 }
 
 barChartHover <- function(input, output, session, hover, data, subcategory) {
