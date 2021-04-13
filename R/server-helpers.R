@@ -41,7 +41,7 @@ loadDefault <- function(regionSettings)
 #' @export
 loadDefaultProjectSettings <- function()
 {
-  loadProjectSettings('./data/ParisForever.xls')
+  loadProjectSettings('./data/Paris_Forever.xls')
 }
 
 #' Load the default region colors
@@ -50,7 +50,7 @@ loadDefaultProjectSettings <- function()
 #' @export
 loadDefaultRegionSettings <- function()
 {
-  loadRegionSettings('./data/ParisForever.xls')
+  loadRegionSettings('./data/Paris_Forever.xls')
 }
 
 #' Load the default sector colors
@@ -59,7 +59,7 @@ loadDefaultRegionSettings <- function()
 #' @export
 loadDefaultSectorColors <- function()
 {
-  loadSectorColors('./data/ParisForever.xls')
+  loadSectorColors('./data/Paris_Forever.xls')
 }
 
 
@@ -69,7 +69,7 @@ loadDefaultSectorColors <- function()
 #' @export
 loadDefaultGroupColors <- function()
 {
-  loadGroupColors('./data/ParisForever.xls')
+  loadGroupColors('./data/Paris_Forever.xls')
 }
 
 #' Load a file into the UI
