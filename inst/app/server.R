@@ -206,7 +206,7 @@ shinyServer(function(input, output, session) {
             "plot.png"
         },
         content = function(file) {
-            plotPNG(function(){print(getTimePlot())}, filename = file, res = 150, width = 1000, height = 600)
+            plotPNG(function(){print(getTimePlot())}, filename = file, res = 150, width = 1500, height = 1200)
         }
     )
 
