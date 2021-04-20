@@ -18,7 +18,8 @@ shinyUI(fluidPage(theme="style.css",
         selectInput('diffScenario', 'Select Difference Scenario', choices=list())
       ),
       img(src = "EPPA_regions.png", width = "100%"),
-      p(class = "blurb", "Visit the MIT website for the", a("full outlook report", href = "https://globalchange.mit.edu/news-media/jp-news-outreach/charting-earth%E2%80%99s-future-21st-century"))
+      p(class = "blurb", "Visit the MIT website for the", a("full outlook report", href = "https://globalchange.mit.edu/news-media/jp-news-outreach/charting-earth%E2%80%99s-future-21st-century")),
+      p(class = "blurb", "Data is available to download in excel format")
     ),
 
     # main display area
