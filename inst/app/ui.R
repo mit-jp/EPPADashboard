@@ -30,7 +30,6 @@ shinyUI(fluidPage(theme="style.css",
                    hover = hoverOpts("exploreHover", delay = 50, delayType = 'throttle')),
         barChartHoverUI("timePlot"),
       ),
-      downloadButton(outputId = "download_plot", label = "Download plot"),
       conditionalPanel(
         condition = "output.show_breakdown_input",
         selectInput('subcategorySelect', 'Break plot down by:', choices=c('none','region', 'region group'))
