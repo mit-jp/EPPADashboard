@@ -5,7 +5,12 @@ library(GCAMdashboard)
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(theme="style.css",
   # Application title
-  titlePanel("MIT Joint Program Outlook Dashboard"),
+  titlePanel(
+    div(
+      column(width = 10, h2("MIT Joint Program Outlook Dashboard")),
+      column(width = 2, img(src = "joint-program-logo.jpg", height = "150px"))
+    ),
+  ),
 
   # Sidebar with user controls
   sidebarLayout(
