@@ -85,7 +85,10 @@ loadProject2 <- function(projFile, regionSettings)
             if (file.access(projFile, mode = 6) != 0) {
                 stop("File ", projFile, " exists but lacks either read or write permission.")
             }
-            prjdata <- readFromExcel(projFile, regionSettings)
+
+            prjdata_econ <- readFromExcel(projFile, "data_econ", regionSettings)
+            prjdata_climate <- readFromExcel(projFile, "data_clim", regionSettings)
+            prjdata <- c(prjdata_econ, prjdata_climate)
         }
         else {
             prjdata <- list()
@@ -146,9 +149,10 @@ loadGroupColors <- function(file) {
     mutate(group = as.factor(group))
 }
 
-readFromExcel <- function(file, regionSettings) {
+readFromExcel <- function(file, sheet, regionSettings) {
     scenario_name <- scenarioName(file)
     data <- read_excel(file,
+                       sheet = sheet,
                        col_types = c("guess", "text", "text", "guess", "guess", "guess", "text"),
                        col_names = c("variable", "sector", "order", "Units", "year", "region", "value")) %>%
         add_column(scenario = scenario_name)
