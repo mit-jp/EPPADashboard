@@ -121,11 +121,12 @@ scenarioName <- function(file_path) {
 loadProjectSettings <- function(file) {
     read_excel(file,
               sheet = "query",
-              cell_cols("A:C"),
-              col_names = c("query", "order", "type")) %>%
+              cell_cols("A:D"),
+              col_names = c("query", "order", "type", "dataType")) %>%
       mutate(order = as.integer(order)) %>%
       mutate(query = as.factor(query)) %>%
       mutate(type = as.factor(type)) %>%
+      mutate(dataType = as.factor(dataType)) %>%
       arrange(query) %>%
       distinct(query, .keep_all = TRUE)
 }
@@ -221,6 +222,7 @@ getProjectScenarios <- function(rFileinfo, concat=NULL)
 getScenarioQueries <- function(rFileinfo, scenarios, concat=NULL)
 {
     prj <- rFileinfo()$project.data
+    dataType <- rFileinfo()$project.dataType
     settings <- rFileinfo()$project.settings
     if(is.null(prj)) {
         if(is.null(concat))
@@ -249,6 +251,7 @@ getScenarioQueries <- function(rFileinfo, scenarios, concat=NULL)
         tibble(query = queries) %>%
         left_join(settings) %>%
         arrange(order, query) %>%
+        filter(dataType == !!dataType) %>%
         pull(query)
     }
 }

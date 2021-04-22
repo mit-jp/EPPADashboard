@@ -34,6 +34,7 @@ shinyServer(function(input, output, session) {
         project.sectorColors <- loadDefaultSectorColors()
         project.groupColors <- loadDefaultGroupColors()
         project.data <- loadDefault(project.regionSettings)
+        project.dataType <- input$dataType
 
 
         if(!is.null(fileinfo)) {
@@ -47,7 +48,8 @@ shinyServer(function(input, output, session) {
              project.settings=project.settings,
              project.regionSettings=project.regionSettings,
              project.sectorColors=project.sectorColors,
-             project.groupColors=project.groupColors)
+             project.groupColors=project.groupColors,
+             project.dataType=project.dataType)
     })
 
     ## Update controls on sidebar in response to user selections
