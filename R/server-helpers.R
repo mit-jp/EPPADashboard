@@ -135,10 +135,10 @@ loadRegionSettings <- function(file) {
   read_excel(file,
              sheet = "rgroup",
              cell_cols("A:C"),
-             col_names = c("region", "group", "color")) %>%
-    mutate(region = str_replace_all(region, "_", " ")) %>%
-    mutate(group = str_replace_all(group, "_", " ")) %>%
-    mutate(group = as.factor(group))
+             col_names = c("EPPA Region", "Regional Group", "color")) %>%
+    mutate(`EPPA Region` = str_replace_all(`EPPA Region`, "_", " ")) %>%
+    mutate(`Regional Group` = str_replace_all(`Regional Group`, "_", " ")) %>%
+    mutate(`Regional Group` = as.factor(`Regional Group`))
 }
 
 loadSectorColors <- function(file) {
@@ -162,7 +162,7 @@ readFromExcel <- function(file, sheet, regionSettings) {
     data <- read_excel(file,
                        sheet = sheet,
                        col_types = c("guess", "text", "text", "guess", "guess", "guess", "text"),
-                       col_names = c("variable", "Source", "order", "Units", "year", "region", "value")) %>%
+                       col_names = c("variable", "Source", "order", "Units", "year", "EPPA Region", "value")) %>%
         add_column(scenario = scenario_name)
 
     # replace GAMS "Eps" output with 0.
@@ -177,13 +177,11 @@ readFromExcel <- function(file, sheet, regionSettings) {
 
     # Replace _ with space in region names
     # GAMS cannot output region names with spaces in them, but we want them to be human-readable
-    data <- data %>% mutate(region = str_replace_all(region, "_", " "))
+    data <- data %>% mutate(`EPPA Region` = str_replace_all(`EPPA Region`, "_", " "))
 
     # Add region groups from the region -> region group mappings
-    regionSettings <- regionSettings %>% select(region, group)
-    data <- data %>%
-      left_join(regionSettings) %>%
-      rename("Regional Group" = group)
+    regionSettings <- regionSettings %>% select(c("EPPA Region", "Regional Group"))
+    data <- data %>% left_join(regionSettings)
 
     # split single table into list of tables, named by variable
     # See https://stackoverflow.com/questions/57107721/how-to-name-the-list-of-the-group-split-output-in-dplyr
@@ -333,7 +331,7 @@ default.plot <- function(label.text='No data selected')
 #' @param query Name of the query to plot
 #' @param pltscen Name of the scenario to plot
 #' @param diffscenDifference scenario, if any
-#' @param key Aggregation variable.  (e.g., 'region' or 'sector')
+#' @param key Aggregation variable.  (e.g., 'EPPA Region' or 'Source')
 #' @param filtervar If not NULL, filter on this variable before aggregating
 #' @param filterset:  Set of values to include in the filter operation.  Ignored
 #'   if filtervar is NULL.
@@ -427,7 +425,7 @@ summarize.unit <- function(unitcol)
 getRegionColorPalette <- function(regionColors)
 {
   color_palette <- regionColors$color
-  names(color_palette) <- regionColors$region
+  names(color_palette) <- regionColors[["EPPA Region"]]
   color_palette
 }
 
@@ -443,25 +441,6 @@ getSectorColorPalette <- function(sectorColors)
   color_palette <- sectorColors$color
   names(color_palette) <- sectorColors$Source
   color_palette
-}
-
-#' Get subcategory names
-#' @param subcategories a list of subcategories
-#' @export
-getSubcategoryNames <- function(subcategories)
-{
-  subcategory_map <- list(region = 'EPPA Region')
-
-  subcategory_names <- list()
-  for (i in 1:length(subcategories)) {
-    subcategory <- subcategories[[i]]
-    if (!is.null(subcategory_map[[subcategory]])) {
-      subcategory_names[[i]] <- subcategory_map[[subcategory]]
-    } else {
-      subcategory_names[[i]] <- subcategory
-    }
-  }
-  subcategory_names
 }
 
 #' Get scenario names
@@ -499,7 +478,7 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
     }
     else {
         if(filter)
-            filtervar <- 'region'
+            filtervar <- "EPPA Region"
         else
             filtervar <- NULL
 
@@ -509,7 +488,7 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
             subcatvar <- as.name(subcatvar)
 
         if (plot_type == "line")
-            subcatvar <- 'region'
+            subcatvar <- "EPPA Region"
 
         pltdata <- getPlotData(prjdata, query, scen, diffscen, subcatvar,
                                filtervar, rgns)
@@ -521,7 +500,7 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
           ylab(pltdata$Units) +
           scale_x_continuous(breaks = scales::pretty_breaks(n = 9))
 
-        if (is.null(plot_type) || plot_type == "stacked" || is.null(subcatvar) || subcatvar != "region") {
+        if (is.null(plot_type) || plot_type == "stacked" || is.null(subcatvar) || subcatvar != "EPPA Region") {
           plt <- plt + geom_bar(stat='identity')
         } else {
           plt <- plt + geom_line(size = 1)
@@ -531,7 +510,7 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
 
             if (subcatvar == "Regional Group") {
               color_palette <- getGroupColorPalette(groupColors)
-            } else if (subcatvar == "region") {
+            } else if (subcatvar == "EPPA Region") {
               color_palette <- getRegionColorPalette(regionSettings)
             } else {
               color_palette <- getSectorColorPalette(sectorColors)
@@ -553,8 +532,8 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
 checkboxMultiGroupInput <- function(variable, choicesByLabel = NULL, selected = NULL)
 {
   div(id = variable, class = "form-group shiny-input-checkboxgroup shiny-input-container shiny-bound-input",
-      choicesByLabel %>% pmap(function(group, region) {
-        checkboxGroupInput("tvRgns", group, choices = region, selected = selected)
+      choicesByLabel %>% pmap(function(`Regional Group`, `EPPA Region`) {
+        checkboxGroupInput("tvRgns", `Regional Group`, choices = `EPPA Region`, selected = selected)
       })
   )
 }

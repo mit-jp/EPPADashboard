@@ -73,7 +73,7 @@ calculateLineHoverValue <- function(hover, df, subcat) {
   if (nrow(point) == 0) return(NULL)
 
   if (subcat == "none") {
-    subcat <- "region"
+    subcat <- "EPPA Region"
   }
 
   # Get the region name and value for display

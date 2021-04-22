@@ -21,7 +21,7 @@ getPlotData(
 
 \item{pltscen}{Name of the scenario to plot}
 
-\item{key}{Aggregation variable.  (e.g., 'region' or 'sector')}
+\item{key}{Aggregation variable.  (e.g., 'EPPA Region' or 'Source')}
 
 \item{filtervar}{If not NULL, filter on this variable before aggregating}
 

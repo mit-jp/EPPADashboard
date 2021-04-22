@@ -126,9 +126,7 @@ shinyServer(function(input, output, session) {
         }
 
         subcategories <- c('none', subcategories)
-        filtered_subcategories <- subcategories[!subcategories %in% c('scenario', 'order', 'Units', 'year', 'value')]
-        names(filtered_subcategories) <- getSubcategoryNames(filtered_subcategories)
-        filtered_subcategories
+        subcategories[!subcategories %in% c('scenario', 'order', 'Units', 'year', 'value')]
     })
 
     getScenarioDescription <- reactive({
@@ -191,20 +189,20 @@ shinyServer(function(input, output, session) {
     output$region_controls <- renderUI({
         prj <- rFileinfo()$project.data
         regionSettings <- rFileinfo()$project.regionSettings %>%
-            select(region, group)
+            select(`EPPA Region`, `Regional Group`)
         scen <- input$plotScenario
         query <- input$plotQuery
         if(uiStateValid(prj, scen, query)) {
             tbl <- getQuery(prj,query,scen)
-            regions <- unique(tbl$region) %>% sort
+            regions <- unique(tbl[["EPPA Region"]]) %>% sort
             # Tibble with two columns: (group, region)
             # group is name of group
             # region is list of regions
-            regions_by_group <- tibble(region = regions) %>%
+            regions_by_group <- tibble(`EPPA Region` = regions) %>%
                 left_join(regionSettings) %>%
-                group_by(group) %>%
-                summarize(region = list(region)) %>%
-                mutate(group = as.character(group))
+                group_by(`Regional Group`) %>%
+                summarize(`EPPA Region` = list(`EPPA Region`)) %>%
+                mutate(`Regional Group` = as.character(`Regional Group`))
             checkboxMultiGroupInput("tvRgns", choicesByLabel = regions_by_group, selected = last.region.filter)
         } else {
             checkboxGroupInput("tvRgns", "Regions")
