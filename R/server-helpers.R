@@ -198,7 +198,9 @@ getProjectScenarios <- function(rFileinfo, concat=NULL)
     if(is.null(pd)) {
         '->none<-'
     } else {
-        rev(rgcam::listScenarios(rFileinfo()$project.data) %>% paste(collapse=concat))
+        scenarios <- rev(rgcam::listScenarios(rFileinfo()$project.data) %>% paste(collapse=concat))
+        names(scenarios) <- getScenarioNames(scenarios)
+        scenarios
     }
 }
 
@@ -449,7 +451,19 @@ getSubcategoryNames <- function(subcategories)
       subcategory_names[[i]] <- subcategory
     }
   }
-  names(subcategories) <- subcategory_names
+  subcategory_names
+}
+
+#' Get scenario names
+#' @param scenarios a list of scenarios
+#' @importFrom stringr str_replace
+getScenarioNames <- function(scenarios)
+{
+  scenario_names <- list()
+  for (i in 1:length(scenarios)) {
+    scenario_names[[i]] <- scenarios[[i]] %>% str_replace("_", " ")
+  }
+  scenario_names
 }
 
 
