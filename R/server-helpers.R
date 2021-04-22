@@ -145,8 +145,8 @@ loadSectorColors <- function(file) {
   read_excel(file,
              sheet = "colormap",
              cell_cols("A:B"),
-             col_names = c("sector", "color")) %>%
-    mutate(sector = as.factor(sector))
+             col_names = c("Source", "color")) %>%
+    mutate(Source = as.factor(Source))
 }
 
 loadGroupColors <- function(file) {
@@ -162,7 +162,7 @@ readFromExcel <- function(file, sheet, regionSettings) {
     data <- read_excel(file,
                        sheet = sheet,
                        col_types = c("guess", "text", "text", "guess", "guess", "guess", "text"),
-                       col_names = c("variable", "sector", "order", "Units", "year", "region", "value")) %>%
+                       col_names = c("variable", "Source", "order", "Units", "year", "region", "value")) %>%
         add_column(scenario = scenario_name)
 
     # replace GAMS "Eps" output with 0.
@@ -385,7 +385,7 @@ getPlotData <- function(prjdata, query, pltscen, diffscen, key, filtervar=NULL,
     if(!is.null(key) &&
        toString(key) %in% (tp %>% names %>% setdiff(c('year', 'Units')))
        ) {
-      if (any(is.na(tp$order)) || key != "sector") {
+      if (any(is.na(tp$order)) || key != "Source") {
         # Do not enforce any special ordering unless we're breaking down by sector and have
         # numbers in the order column
         tp <- tp %>%
@@ -441,7 +441,7 @@ getGroupColorPalette <- function(groupColors)
 getSectorColorPalette <- function(sectorColors)
 {
   color_palette <- sectorColors$color
-  names(color_palette) <- sectorColors$sector
+  names(color_palette) <- sectorColors$Source
   color_palette
 }
 
@@ -450,7 +450,7 @@ getSectorColorPalette <- function(sectorColors)
 #' @export
 getSubcategoryNames <- function(subcategories)
 {
-  subcategory_map <- list(region = 'EPPA Region', sector = 'Source')
+  subcategory_map <- list(region = 'EPPA Region')
 
   subcategory_names <- list()
   for (i in 1:length(subcategories)) {
