@@ -18,7 +18,7 @@ shinyUI(fluidPage(theme="style.css",
     sidebarPanel(
       selectInput('plotScenario', 'Select Scenario to Plot', choices=list()),
       p(class = "scenario-description", textOutput('scenarioDescription')),
-      radioButtons('dataType', 'Data Type', choices=list(`Economic Data` = "Econ", `Climate Data` = "Climate")),
+      radioButtons('dataType', 'Data Type', choices=list(`Emissions and Climate` = "Climate", `Energy and Economics` = "Econ")),
       selectInput('plotQuery', 'Select Data to Plot', choices=list()),
       checkboxInput('diffCheck', 'Plot Difference vs Another Scenario'),
       conditionalPanel(
