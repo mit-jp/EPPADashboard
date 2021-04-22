@@ -16,6 +16,7 @@ shinyUI(fluidPage(theme="style.css",
   sidebarLayout(
     sidebarPanel(
       selectInput('plotScenario', 'Select Scenario to Plot', choices=list()),
+      p(class = "scenario-description", textOutput('scenarioDescription')),
       selectInput('plotQuery', 'Select Data to Plot', choices=list()),
       checkboxInput('diffCheck', 'Plot Difference vs Another Scenario'),
       conditionalPanel(

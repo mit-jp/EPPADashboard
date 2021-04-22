@@ -129,12 +129,21 @@ shinyServer(function(input, output, session) {
         filtered_subcategories
     })
 
+    getScenarioDescription <- reactive({
+        scenario <- input$plotScenario
+        scenarioDescriptions[[scenario]]
+    })
+
     output$scenarios <- renderText({
         getProjectScenarios(rFileinfo, concat='\n')
     })
 
     output$queries <- renderText({
         getScenarioQueries(rFileinfo, input$scenarioInput, concat='\n')
+    })
+
+    output$scenarioDescription <- renderText({
+        getScenarioDescription()
     })
 
     getTimePlot <- function()
