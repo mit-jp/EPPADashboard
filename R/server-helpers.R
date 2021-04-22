@@ -175,7 +175,7 @@ readFromExcel <- function(file, sheet, regionSettings) {
     regionSettings <- regionSettings %>% select(region, group)
     data <- data %>%
       left_join(regionSettings) %>%
-      rename("region group" = group)
+      rename("Regional Group" = group)
 
     # split single table into list of tables, named by variable
     # See https://stackoverflow.com/questions/57107721/how-to-name-the-list-of-the-group-split-output-in-dplyr
@@ -433,6 +433,25 @@ getSectorColorPalette <- function(sectorColors)
   color_palette
 }
 
+#' Get subcategory names
+#' @param subcategories a list of subcategories
+#' @export
+getSubcategoryNames <- function(subcategories)
+{
+  subcategory_map <- list(region = 'EPPA Region', sector = 'Source')
+
+  subcategory_names <- list()
+  for (i in 1:length(subcategories)) {
+    subcategory <- subcategories[[i]]
+    if (!is.null(subcategory_map[[subcategory]])) {
+      subcategory_names[[i]] <- subcategory_map[[subcategory]]
+    } else {
+      subcategory_names[[i]] <- subcategory
+    }
+  }
+  names(subcategories) <- subcategory_names
+}
+
 
 #' Plot values over time as a bar chart
 #' @param prjdata A project data structure
@@ -486,7 +505,7 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
 
         if(!is.null(subcatvar)) {
 
-            if (subcatvar == "region group") {
+            if (subcatvar == "Regional Group") {
               color_palette <- getGroupColorPalette(groupColors)
             } else if (subcatvar == "region") {
               color_palette <- getRegionColorPalette(regionSettings)

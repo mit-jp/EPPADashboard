@@ -102,7 +102,7 @@ shinyServer(function(input, output, session) {
             ## Assumes that a particular query has the same columns in all scenarios
             subcategories <- getSubcategories()
             prevSubcat <- if(input$subcategorySelect %in% subcategories) input$subcategorySelect else 'none'
-            updateSelectInput(session, 'subcategorySelect', choices=c('none', subcategories),
+            updateSelectInput(session, 'subcategorySelect', choices=subcategories,
                               selected=prevSubcat)
         }
     })
@@ -123,7 +123,10 @@ shinyServer(function(input, output, session) {
             }
         }
 
-        subcategories[!subcategories %in% c('scenario', 'order', 'Units', 'year', 'value')]
+        subcategories <- c('none', subcategories)
+        filtered_subcategories <- subcategories[!subcategories %in% c('scenario', 'order', 'Units', 'year', 'value')]
+        names(filtered_subcategories) <- getSubcategoryNames(filtered_subcategories)
+        filtered_subcategories
     })
 
     output$scenarios <- renderText({

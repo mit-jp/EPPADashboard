@@ -38,7 +38,7 @@ shinyUI(fluidPage(theme="style.css",
       ),
       conditionalPanel(
         condition = "output.show_breakdown_input",
-        selectInput('subcategorySelect', 'Break plot down by:', choices=c('none','region', 'region group'))
+        selectInput('subcategorySelect', 'Break plot down by:', choices=c('none','EPPA Region', 'Regional Group'))
       ),
       checkboxInput('tvFilterCheck', 'Limit plot to selected regions'),
       uiOutput("region_controls"),
