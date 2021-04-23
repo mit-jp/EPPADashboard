@@ -488,7 +488,7 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
             subcatvar <- as.name(subcatvar)
 
         if (plot_type == "line")
-            subcatvar <- "EPPA Region"
+            subcatvar <- as.name("EPPA Region")
 
         pltdata <- getPlotData(prjdata, query, scen, diffscen, subcatvar,
                                filtervar, rgns)
