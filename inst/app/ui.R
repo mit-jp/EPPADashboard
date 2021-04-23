@@ -46,5 +46,13 @@ shinyUI(fluidPage(theme="style.css",
       checkboxInput('tvFilterCheck', 'Limit plot to selected regions'),
       uiOutput("region_controls"),
     ) #  main Panel
-  )   # sidebar layout
+  ),   # sidebar layout
+  tags$footer(
+    p("Website by Cypress Frankenfeld"),
+    a(
+      href="https://github.com/cypressf/EPPADashboard/tree/climate-outlook",
+      img(src = "github-logo.png")
+    ),
+    p("Contribute on github")
+  )
 ))

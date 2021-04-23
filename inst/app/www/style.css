@@ -19,3 +19,9 @@
 .blurb {
   margin-top:1em;
 }
+
+footer {
+  background: #f5f5f5;
+  text-align: center;
+  padding: 1em;
+}
