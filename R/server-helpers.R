@@ -427,7 +427,7 @@ getSectorColorPalette <- function(sectorColors)
 #' @param regionColors Region colors to use, if plotting by region
 #' @param sectorColors Sector colors to use, if plotting by sector
 #' @importFrom magrittr "%>%"
-#' @importFrom ggplot2 ggplot aes_string geom_bar geom_line theme_minimal ylab scale_fill_manual scale_color_manual scale_x_continuous
+#' @importFrom ggplot2 ggplot aes_string geom_bar geom_line theme_minimal ylab scale_fill_manual scale_color_manual scale_x_continuous labs
 #' @export
 plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filter, rgns, regionSettings, sectorColors)
 {
@@ -456,7 +456,8 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
         plt <- ggplot(pltdata, aes_string('year','value', fill=subcatvar, color=subcatvar)) +
           theme_minimal(base_size = 16) +
           ylab(pltdata$Units) +
-          scale_x_continuous(breaks = scales::pretty_breaks(n = 9))
+          scale_x_continuous(breaks = scales::pretty_breaks(n = 9)) +
+          labs(title = query)
 
         if (is.null(plot_type) || plot_type == "stacked" || is.null(subcatvar) || subcatvar != "region") {
           plt <- plt + geom_bar(stat='identity')
