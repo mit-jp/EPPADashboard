@@ -69,6 +69,16 @@ loadDefaultSectorColors <- function()
   loadSectorColors('./data/Paris_Forever.xls')
 }
 
+#' Load the default percentile colors
+#'
+#' Returns the percentile colors from the default project file
+#' @export
+loadDefaultPercentileColors <- function()
+{
+  loadPercentileColors('./data/Paris_Forever.xls')
+}
+
+
 
 #' Load the default sector colors
 #'
@@ -149,6 +159,14 @@ loadSectorColors <- function(file) {
     mutate(Source = as.factor(Source))
 }
 
+loadPercentileColors <- function(file) {
+  read_excel(file,
+             sheet = "percentile",
+             cell_cols("A:B"),
+             col_names = c("Percentile", "color")) %>%
+    mutate(Percentile = as.factor(Percentile))
+}
+
 loadGroupColors <- function(file) {
   read_excel(file,
              sheet = "groupcolormap",
@@ -161,8 +179,8 @@ readFromExcel <- function(file, sheet, regionSettings) {
     scenario_name <- scenarioName(file)
     data <- read_excel(file,
                        sheet = sheet,
-                       col_types = c("guess", "text", "text", "guess", "guess", "guess", "text"),
-                       col_names = c("variable", "Source", "order", "Units", "year", "EPPA Region", "value")) %>%
+                       col_types = c("guess", "text", "text", "text", "guess", "guess", "guess", "text"),
+                       col_names = c("variable", "Source", "order", "Percentile", "Units", "year", "EPPA Region", "value")) %>%
         add_column(scenario = scenario_name)
 
     # replace GAMS "Eps" output with 0.
@@ -443,6 +461,14 @@ getSectorColorPalette <- function(sectorColors)
   color_palette
 }
 
+getPercentileColorPalette <- function(percentileColors)
+{
+  color_palette <- percentileColors$color
+  names(color_palette) <- percentileColors$Percentile
+  color_palette
+}
+
+
 #' Get scenario names
 #' @param scenarios a list of scenarios
 #' @importFrom stringr str_replace
@@ -468,10 +494,11 @@ getScenarioNames <- function(scenarios)
 #' @param regionColors Region colors to use, if plotting by region
 #' @param sectorColors Sector colors to use, if plotting by sector
 #' @param groupColors Group colors to use, if plotting by group
+#' @param percentileColors Percentile colors to use, if plotting by percentile
 #' @importFrom magrittr "%>%"
 #' @importFrom ggplot2 ggplot aes_string geom_bar geom_line theme_minimal ylab scale_fill_manual scale_color_manual scale_x_continuous labs
 #' @export
-plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filter, rgns, regionSettings, sectorColors, groupColors)
+plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filter, rgns, regionSettings, sectorColors, groupColors, percentileColors)
 {
     if(is.null(prjdata)) {
       list(plot = default.plot())
@@ -490,6 +517,9 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
         if (plot_type == "line")
             subcatvar <- as.name("EPPA Region")
 
+        if (plot_type == "percentile")
+            subcatvar <- as.name("Percentile")
+
         pltdata <- getPlotData(prjdata, query, scen, diffscen, subcatvar,
                                filtervar, rgns)
 
@@ -501,7 +531,7 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
           scale_x_continuous(breaks = scales::pretty_breaks(n = 9)) +
           labs(title = query)
 
-        if (is.null(plot_type) || plot_type == "stacked" || is.null(subcatvar) || subcatvar != "EPPA Region") {
+        if (is.null(plot_type) || plot_type == "stacked" || is.null(subcatvar)) {
           plt <- plt + geom_bar(stat='identity')
         } else {
           plt <- plt + geom_line(size = 1)
@@ -513,6 +543,8 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
               color_palette <- getGroupColorPalette(groupColors)
             } else if (subcatvar == "EPPA Region") {
               color_palette <- getRegionColorPalette(regionSettings)
+            } else if (subcatvar == "Percentile") {
+              color_palette <- getPercentileColorPalette(percentileColors)
             } else {
               color_palette <- getSectorColorPalette(sectorColors)
             }

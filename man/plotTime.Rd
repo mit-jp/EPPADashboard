@@ -15,7 +15,8 @@ plotTime(
   rgns,
   regionSettings,
   sectorColors,
-  groupColors
+  groupColors,
+  percentileColors
 )
 }
 \arguments{
@@ -38,6 +39,8 @@ plotTime(
 \item{sectorColors}{Sector colors to use, if plotting by sector}
 
 \item{groupColors}{Group colors to use, if plotting by group}
+
+\item{percentileColors}{Percentile colors to use, if plotting by percentile}
 
 \item{regionColors}{Region colors to use, if plotting by region}
 }

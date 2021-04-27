@@ -10,6 +10,7 @@ library(GCAMdashboard)
 library(tibble)
 library(stringr)
 library(randomcoloR)
+library(ggplot2)
 
 options(shiny.maxRequestSize=512*1024^2) # 512 MB max file upload size.
 
@@ -32,6 +33,7 @@ shinyServer(function(input, output, session) {
         project.settings <- loadDefaultProjectSettings()
         project.regionSettings <- loadDefaultRegionSettings()
         project.sectorColors <- loadDefaultSectorColors()
+        project.percentileColors <- loadDefaultPercentileColors()
         project.groupColors <- loadDefaultGroupColors()
         project.data <- loadDefault(project.regionSettings)
         project.dataType <- input$dataType
@@ -49,7 +51,8 @@ shinyServer(function(input, output, session) {
              project.regionSettings=project.regionSettings,
              project.sectorColors=project.sectorColors,
              project.groupColors=project.groupColors,
-             project.dataType=project.dataType)
+             project.dataType=project.dataType,
+             project.percentileColors=project.percentileColors)
     })
 
     ## Update controls on sidebar in response to user selections
@@ -153,6 +156,7 @@ shinyServer(function(input, output, session) {
         regionSettings <- rFileinfo()$project.regionSettings
         sectorColors <- rFileinfo()$project.sectorColors
         groupColors <- rFileinfo()$project.groupColors
+        percentileColors <- rFileinfo()$project.percentileColors
         scen <- input$plotScenario
         query <- input$plotQuery
         plot_type <- filter(settings, query == !!query)$type
@@ -176,7 +180,8 @@ shinyServer(function(input, output, session) {
         }
 
         plt <- plotTime(prj, plot_type, query, scen, diffscen, subcategorySelect,
-                        input$tvFilterCheck, region.filter, regionSettings, sectorColors, groupColors)
+                        input$tvFilterCheck, region.filter, regionSettings, sectorColors, groupColors,
+                        percentileColors)
         timePlot.df(plt$plotdata)
         timePlot.plot_type(plot_type)
         plt$plot
