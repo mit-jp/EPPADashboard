@@ -218,7 +218,14 @@ shinyServer(function(input, output, session) {
         settings <- rFileinfo()$project.settings
         query <- input$plotQuery
         plot_type <- filter(settings, query == !!query)$type
-        plot_type != "line"
+        plot_type != "line" && plot_type != "percentile"
+    })
+
+    output$show_region_select <- reactive({
+        settings <- rFileinfo()$project.settings
+        query <- input$plotQuery
+        plot_type <- filter(settings, query == !!query)$type
+        plot_type != "percentile"
     })
 
     output$download_plot <- downloadHandler(
@@ -239,6 +246,7 @@ shinyServer(function(input, output, session) {
     })
 
     outputOptions(output, "show_breakdown_input", suspendWhenHidden = FALSE)
+    outputOptions(output, "show_region_select", suspendWhenHidden = FALSE)
 
     # Add a hover over the time plot bar chart
     callModule(
