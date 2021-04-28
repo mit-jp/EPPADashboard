@@ -10,6 +10,7 @@ getPlotData(
   pltscen,
   diffscen,
   key,
+  percentileOrder,
   filtervar = NULL,
   filterset = NULL
 )
@@ -22,6 +23,8 @@ getPlotData(
 \item{pltscen}{Name of the scenario to plot}
 
 \item{key}{Aggregation variable.  (e.g., 'EPPA Region' or 'Source')}
+
+\item{percentileOrder}{if Aggregation variable is percentile, the ordering for those percentiles}
 
 \item{filtervar}{If not NULL, filter on this variable before aggregating}
 

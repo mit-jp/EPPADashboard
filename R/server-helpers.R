@@ -350,11 +350,12 @@ default.plot <- function(label.text='No data selected')
 #' @param pltscen Name of the scenario to plot
 #' @param diffscenDifference scenario, if any
 #' @param key Aggregation variable.  (e.g., 'EPPA Region' or 'Source')
+#' @param percentileOrder if Aggregation variable is percentile, the ordering for those percentiles
 #' @param filtervar If not NULL, filter on this variable before aggregating
 #' @param filterset:  Set of values to include in the filter operation.  Ignored
 #'   if filtervar is NULL.
 #' @keywords internal
-getPlotData <- function(prjdata, query, pltscen, diffscen, key, filtervar=NULL,
+getPlotData <- function(prjdata, query, pltscen, diffscen, key, percentileOrder, filtervar=NULL,
                         filterset=NULL)
 {
     tp <- getQuery(prjdata, query, pltscen) # 'table plot'
@@ -401,18 +402,27 @@ getPlotData <- function(prjdata, query, pltscen, diffscen, key, filtervar=NULL,
     if(!is.null(key) &&
        toString(key) %in% (tp %>% names %>% setdiff(c('year', 'Units')))
        ) {
-      if (any(is.na(tp$order)) || key != "Source") {
-        # Do not enforce any special ordering unless we're breaking down by sector and have
-        # numbers in the order column
-        tp <- tp %>%
-          group_by(!!! syms(key), year, Units) %>%
-          summarise(value = sum(value))
-      } else {
+      # Do not enforce any special ordering unless we're breaking down by sector and have
+      # numbers in the order column, or we're breaking down by percentile
+      if (key == "Source" && !any(is.na(tp$order))) {
         ordered_subcategories <- unique(arrange(tp, desc(order))[[key]])
         tp <- tp %>%
           mutate(!!key := factor(!!key, levels = ordered_subcategories, ordered = TRUE)) %>%
           group_by(!!key, year, Units) %>%
           summarise(value = sum(value), order = first(order))
+      } else if (key == "Percentile") {
+        tp <- tp %>%
+          mutate(Percentile = as.factor(Percentile)) %>%
+          mutate(Percentile = factor( # order the percentiles correctly
+            Percentile,
+            levels = c("95th_percentile", "75th_percentile", "Median", "25th_percentile", "5th_percentile")
+          )) %>%
+          group_by(!!! syms(key), year, Units) %>%
+          summarise(value = sum(value))
+      } else {
+        tp <- tp %>%
+          group_by(!!! syms(key), year, Units) %>%
+          summarise(value = sum(value))
       }
     }
     else {
@@ -520,7 +530,7 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
         if (plot_type == "percentile")
             subcatvar <- as.name("Percentile")
 
-        pltdata <- getPlotData(prjdata, query, scen, diffscen, subcatvar,
+        pltdata <- getPlotData(prjdata, query, scen, diffscen, subcatvar, percentileColors$Percentile,
                                filtervar, rgns)
 
         if(is.null(pltdata)) return(list(plot = default.plot()))
