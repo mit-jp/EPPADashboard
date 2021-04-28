@@ -69,6 +69,16 @@ loadDefaultSectorColors <- function()
   loadSectorColors('./data/Paris_Forever.xls')
 }
 
+#' Load the default percentile colors
+#'
+#' Returns the percentile colors from the default project file
+#' @export
+loadDefaultPercentileColors <- function()
+{
+  loadPercentileColors('./data/Paris_Forever.xls')
+}
+
+
 
 #' Load the default sector colors
 #'
@@ -149,6 +159,14 @@ loadSectorColors <- function(file) {
     mutate(Source = as.factor(Source))
 }
 
+loadPercentileColors <- function(file) {
+  read_excel(file,
+             sheet = "percentile",
+             cell_cols("A:B"),
+             col_names = c("Percentile", "color")) %>%
+    mutate(Percentile = as.factor(Percentile))
+}
+
 loadGroupColors <- function(file) {
   read_excel(file,
              sheet = "groupcolormap",
@@ -161,8 +179,8 @@ readFromExcel <- function(file, sheet, regionSettings) {
     scenario_name <- scenarioName(file)
     data <- read_excel(file,
                        sheet = sheet,
-                       col_types = c("guess", "text", "text", "guess", "guess", "guess", "text"),
-                       col_names = c("variable", "Source", "order", "Units", "year", "EPPA Region", "value")) %>%
+                       col_types = c("guess", "text", "text", "text", "guess", "guess", "guess", "text"),
+                       col_names = c("variable", "Source", "order", "Percentile", "Units", "year", "EPPA Region", "value")) %>%
         add_column(scenario = scenario_name)
 
     # replace GAMS "Eps" output with 0.
@@ -332,11 +350,12 @@ default.plot <- function(label.text='No data selected')
 #' @param pltscen Name of the scenario to plot
 #' @param diffscenDifference scenario, if any
 #' @param key Aggregation variable.  (e.g., 'EPPA Region' or 'Source')
+#' @param percentileOrder if Aggregation variable is percentile, the ordering for those percentiles
 #' @param filtervar If not NULL, filter on this variable before aggregating
 #' @param filterset:  Set of values to include in the filter operation.  Ignored
 #'   if filtervar is NULL.
 #' @keywords internal
-getPlotData <- function(prjdata, query, pltscen, diffscen, key, filtervar=NULL,
+getPlotData <- function(prjdata, query, pltscen, diffscen, key, percentileOrder, filtervar=NULL,
                         filterset=NULL)
 {
     tp <- getQuery(prjdata, query, pltscen) # 'table plot'
@@ -383,18 +402,27 @@ getPlotData <- function(prjdata, query, pltscen, diffscen, key, filtervar=NULL,
     if(!is.null(key) &&
        toString(key) %in% (tp %>% names %>% setdiff(c('year', 'Units')))
        ) {
-      if (any(is.na(tp$order)) || key != "Source") {
-        # Do not enforce any special ordering unless we're breaking down by sector and have
-        # numbers in the order column
-        tp <- tp %>%
-          group_by(!!! syms(key), year, Units) %>%
-          summarise(value = sum(value))
-      } else {
+      # Do not enforce any special ordering unless we're breaking down by sector and have
+      # numbers in the order column, or we're breaking down by percentile
+      if (key == "Source" && !any(is.na(tp$order))) {
         ordered_subcategories <- unique(arrange(tp, desc(order))[[key]])
         tp <- tp %>%
           mutate(!!key := factor(!!key, levels = ordered_subcategories, ordered = TRUE)) %>%
           group_by(!!key, year, Units) %>%
           summarise(value = sum(value), order = first(order))
+      } else if (key == "Percentile") {
+        tp <- tp %>%
+          mutate(Percentile = as.factor(Percentile)) %>%
+          mutate(Percentile = factor( # order the percentiles correctly
+            Percentile,
+            levels = c("95th_percentile", "75th_percentile", "Median", "25th_percentile", "5th_percentile")
+          )) %>%
+          group_by(!!! syms(key), year, Units) %>%
+          summarise(value = sum(value))
+      } else {
+        tp <- tp %>%
+          group_by(!!! syms(key), year, Units) %>%
+          summarise(value = sum(value))
       }
     }
     else {
@@ -443,6 +471,14 @@ getSectorColorPalette <- function(sectorColors)
   color_palette
 }
 
+getPercentileColorPalette <- function(percentileColors)
+{
+  color_palette <- percentileColors$color
+  names(color_palette) <- percentileColors$Percentile
+  color_palette
+}
+
+
 #' Get scenario names
 #' @param scenarios a list of scenarios
 #' @importFrom stringr str_replace
@@ -468,10 +504,11 @@ getScenarioNames <- function(scenarios)
 #' @param regionColors Region colors to use, if plotting by region
 #' @param sectorColors Sector colors to use, if plotting by sector
 #' @param groupColors Group colors to use, if plotting by group
+#' @param percentileColors Percentile colors to use, if plotting by percentile
 #' @importFrom magrittr "%>%"
 #' @importFrom ggplot2 ggplot aes_string geom_bar geom_line theme_minimal ylab scale_fill_manual scale_color_manual scale_x_continuous labs
 #' @export
-plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filter, rgns, regionSettings, sectorColors, groupColors)
+plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filter, rgns, regionSettings, sectorColors, groupColors, percentileColors)
 {
     if(is.null(prjdata)) {
       list(plot = default.plot())
@@ -490,7 +527,10 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
         if (plot_type == "line")
             subcatvar <- as.name("EPPA Region")
 
-        pltdata <- getPlotData(prjdata, query, scen, diffscen, subcatvar,
+        if (plot_type == "percentile")
+            subcatvar <- as.name("Percentile")
+
+        pltdata <- getPlotData(prjdata, query, scen, diffscen, subcatvar, percentileColors$Percentile,
                                filtervar, rgns)
 
         if(is.null(pltdata)) return(list(plot = default.plot()))
@@ -501,7 +541,7 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
           scale_x_continuous(breaks = scales::pretty_breaks(n = 9)) +
           labs(title = query)
 
-        if (is.null(plot_type) || plot_type == "stacked" || is.null(subcatvar) || subcatvar != "EPPA Region") {
+        if (is.null(plot_type) || plot_type == "stacked" || is.null(subcatvar)) {
           plt <- plt + geom_bar(stat='identity')
         } else {
           plt <- plt + geom_line(size = 1)
@@ -513,6 +553,8 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
               color_palette <- getGroupColorPalette(groupColors)
             } else if (subcatvar == "EPPA Region") {
               color_palette <- getRegionColorPalette(regionSettings)
+            } else if (subcatvar == "Percentile") {
+              color_palette <- getPercentileColorPalette(percentileColors)
             } else {
               color_palette <- getSectorColorPalette(sectorColors)
             }
