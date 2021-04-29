@@ -164,6 +164,7 @@ loadPercentileColors <- function(file) {
              sheet = "percentile",
              cell_cols("A:B"),
              col_names = c("Percentile", "color")) %>%
+    mutate(Percentile = str_replace_all(Percentile, "_", " ")) %>%
     mutate(Percentile = as.factor(Percentile))
 }
 
@@ -193,9 +194,11 @@ readFromExcel <- function(file, sheet, regionSettings) {
     data$year <- as.numeric(data$year)
     data$order <- as.numeric(data$order)
 
-    # Replace _ with space in region names
     # GAMS cannot output region names with spaces in them, but we want them to be human-readable
-    data <- data %>% mutate(`EPPA Region` = str_replace_all(`EPPA Region`, "_", " "))
+    data <- data %>% mutate(
+      `EPPA Region` = str_replace_all(`EPPA Region`, "_", " "),
+      Percentile = str_replace_all(Percentile, "_", " ")
+    )
 
     # Add region groups from the region -> region group mappings
     regionSettings <- regionSettings %>% select(c("EPPA Region", "Regional Group"))
@@ -415,7 +418,7 @@ getPlotData <- function(prjdata, query, pltscen, diffscen, key, percentileOrder,
           mutate(Percentile = as.factor(Percentile)) %>%
           mutate(Percentile = factor( # order the percentiles correctly
             Percentile,
-            levels = c("95th_percentile", "75th_percentile", "Median", "25th_percentile", "5th_percentile")
+            levels = c("95th percentile", "75th percentile", "Median", "25th percentile", "5th percentile")
           )) %>%
           group_by(!!! syms(key), year, Units) %>%
           summarise(value = sum(value))
