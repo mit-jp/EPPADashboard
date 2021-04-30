@@ -35,17 +35,27 @@ calculateHoverValue <- function(hover, df, plot_type, subcat) {
 
   # If there are negative values (most likely from a diff plot), flip their
   # signs so we can use the same logic as we do for positive bars.
+
+  value_column <- "value"
+  if (plot_type == "percentile") {
+    value_column <- "Median"
+  }
+
   y <- hover$y
   if(y < 0) {
-    df <- df[which(df$value < 0), ]
-    df$value <- abs(df$value)
+    df <- df[which(df[[value_column]] < 0), ]
+    df[[value_column]] <- abs(df[[value_column]])
     y <- abs(y)
   } else {
-    df <- df[which(df$value > 0), ]
+    df <- df[which(df[[value_column]] > 0), ]
   }
 
   if (plot_type == "line") {
     return(calculateLineHoverValue(hover, df, subcat))
+  }
+
+  if (plot_type == "percentile") {
+    return(calculatePercentileHoverValue(hover, df))
   }
 
   if(y > sum(df$value)) return(NULL) # Above the bar
@@ -66,6 +76,13 @@ calculateHoverValue <- function(hover, df, plot_type, subcat) {
     val <- round(df$value[index], digits = 1) * sign(hover$y)
     paste0(regionName, ': ', val)
   }
+}
+
+calculatePercentileHoverValue <- function(hover, df) {
+  point <- nearPoints(df, hover, yvar = "Median", xvar = "year", threshold = 100, maxpoints = 1, addDist = TRUE)
+  if (nrow(point) == 0) return(NULL)
+  val <- round(point$Median, digits = 3) * sign(hover$y)
+  paste0(point$year, " median: ", val)
 }
 
 calculateLineHoverValue <- function(hover, df, subcat) {
