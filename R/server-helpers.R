@@ -2,6 +2,7 @@ library(readxl)
 library(purrr)
 library(tibble)
 library(dplyr)
+library(tidyr)
 library(stringr)
 library(randomcoloR)
 library(fs)
@@ -509,6 +510,7 @@ getScenarioNames <- function(scenarios)
 #' @param groupColors Group colors to use, if plotting by group
 #' @param percentileColors Percentile colors to use, if plotting by percentile
 #' @importFrom magrittr "%>%"
+#' @importFrom tidyr pivot_wider
 #' @importFrom ggplot2 ggplot aes_string geom_bar geom_line theme_minimal ylab scale_fill_manual scale_color_manual scale_x_continuous labs
 #' @export
 plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filter, rgns, regionSettings, sectorColors, groupColors, percentileColors)
@@ -538,19 +540,34 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
 
         if(is.null(pltdata)) return(list(plot = default.plot()))
 
-        plt <- ggplot(pltdata, aes_string('year','value', fill=subcatvar, color=subcatvar)) +
+
+
+        plt <- ggplot(pltdata, aes_string('year','value', fill=subcatvar, color=subcatvar))
+
+        if (!is.null(subcatvar) && subcatvar == "Percentile") {
+          pltdata <- pltdata %>% pivot_wider(names_from = Percentile, values_from = value)
+          plt <- ggplot(pltdata, aes(x = year))
+        }
+
+        plt <- plt +
+          labs(title = query) +
           theme_minimal(base_size = 16) +
           ylab(pltdata$Units) +
-          scale_x_continuous(breaks = scales::pretty_breaks(n = 9)) +
-          labs(title = query)
+          scale_x_continuous(breaks = scales::pretty_breaks(n = 9))
 
         if (is.null(plot_type) || plot_type == "stacked" || is.null(subcatvar)) {
           plt <- plt + geom_bar(stat='identity')
-        } else {
+        } else if (plot_type == "line") {
           plt <- plt + geom_line(size = 1)
+        } else {
+          plt <- plt +
+            geom_ribbon(aes(fill = "90%", ymin = `5th percentile`, ymax = `95th percentile`)) +
+            geom_ribbon(aes(fill = "50%", ymin = `25th percentile`, ymax = `75th percentile`)) +
+            geom_line(aes(y = Median)) +
+            scale_fill_manual(name = "Confidence Interval", values = c("90%" = "grey90", "50%" = "grey70"))
         }
 
-        if(!is.null(subcatvar)) {
+        if(!is.null(subcatvar) && subcatvar != "Percentile") {
 
             if (subcatvar == "Regional Group") {
               color_palette <- getGroupColorPalette(groupColors)
