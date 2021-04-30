@@ -1,6 +1,6 @@
 # EPPA Dashboard: An Interactive Dashboard for Exploring EPPA Scenario Data
 
-The EPPA Dashboard is a scenario explorer for EPPA.  Its purpose is to
+The EPPA Dashboard is a scenario explorer for the MIT Economic Projection and Policy Analysis (EPPA) model.  Its purpose is to
 provide a way to give users a quick view of the data in a collection
 of scenarios.  You can get a listing of the scenarios in a data set
 and the queries available for each scenario, or available jointly for
@@ -16,18 +16,18 @@ package, if you don't have it already.  You can do that by entering:
 ```R
 install.packages('devtools')
 ```
-Next, install the GCAMdashboard
+Next, install the EPPAdashboard
 package:
 ```R
 devtools::install_github('cypressf/EPPADashboard', ref = "climate-outlook")
 ```
-This should install all of the required packages that the GCAM
+This should install all of the required packages that the EPPA
 Dashboard needs to operate for you automatically.
 
 ## Usage
 
 To run the EPPA Dashboard, from the R command console enter
-`GCAMdashboard::run()`.
+`EPPAdashboard::run()`.
 
 ### Uploading data
 
