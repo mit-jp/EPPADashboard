@@ -564,7 +564,7 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
             geom_ribbon(aes(fill = "90%", ymin = `5th percentile`, ymax = `95th percentile`)) +
             geom_ribbon(aes(fill = "50%", ymin = `25th percentile`, ymax = `75th percentile`)) +
             geom_line(aes(y = Median)) +
-            scale_fill_manual(name = "Confidence Interval", values = c("90%" = "grey90", "50%" = "grey70"))
+            scale_fill_manual(name = "Likelihood Range", values = c("90%" = "grey90", "50%" = "grey70"))
         }
 
         if(!is.null(subcatvar) && subcatvar != "Percentile") {
