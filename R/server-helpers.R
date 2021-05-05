@@ -132,12 +132,13 @@ scenarioName <- function(file_path) {
 loadProjectSettings <- function(file) {
     read_excel(file,
               sheet = "query",
-              cell_cols("A:D"),
-              col_names = c("query", "order", "type", "dataType")) %>%
+              cell_cols("A:F"),
+              col_names = c("query", "order", "type", "dataType", "unused", "description")) %>%
       mutate(order = as.integer(order)) %>%
       mutate(query = as.factor(query)) %>%
       mutate(type = as.factor(type)) %>%
       mutate(dataType = as.factor(dataType)) %>%
+      mutate(unused = NULL) %>%
       arrange(query) %>%
       distinct(query, .keep_all = TRUE)
 }

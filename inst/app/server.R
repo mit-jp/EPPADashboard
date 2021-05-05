@@ -137,6 +137,13 @@ shinyServer(function(input, output, session) {
         scenarioDescriptions[[scenario]]
     })
 
+    getQueryDescription <- reactive({
+        settings <- isolate(rFileinfo()$project.settings)
+        query <- input$plotQuery
+        description <- filter(settings, query == !!query)$description
+        description
+    })
+
     output$scenarios <- renderText({
         getProjectScenarios(rFileinfo, concat='\n')
     })
@@ -147,6 +154,10 @@ shinyServer(function(input, output, session) {
 
     output$scenarioDescription <- renderText({
         getScenarioDescription()
+    })
+
+    output$queryDescription <- renderText({
+        getQueryDescription()
     })
 
     getTimePlot <- function()

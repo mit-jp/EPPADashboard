@@ -39,6 +39,7 @@ shinyUI(fluidPage(theme="style.css",
                    hover = hoverOpts("exploreHover", delay = 50, delayType = 'throttle')),
         barChartHoverUI("timePlot"),
       ),
+      p(textOutput("queryDescription")),
       conditionalPanel(
         condition = "output.show_breakdown_input",
         selectInput('subcategorySelect', 'Break plot down by:', choices=c('none','EPPA Region', 'Regional Group'))
