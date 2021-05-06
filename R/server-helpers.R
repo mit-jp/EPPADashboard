@@ -491,7 +491,7 @@ getScenarioNames <- function(scenarios)
 {
   scenario_names <- list()
   for (i in 1:length(scenarios)) {
-    scenario_names[[i]] <- scenarios[[i]] %>% str_replace("_", " ")
+    scenario_names[[i]] <- scenarios[[i]] %>% str_replace_all("_", " ")
   }
   scenario_names
 }
