@@ -539,9 +539,11 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
         pltdata <- getPlotData(prjdata, query, scen, diffscen, subcatvar, percentileColors$Percentile,
                                filtervar, rgns)
 
+        if (any(is.na(pltdata[subcatvar]))) {
+          subcatvar <- NULL
+        }
+
         if(is.null(pltdata)) return(list(plot = default.plot()))
-
-
 
         plt <- ggplot(pltdata, aes_string('year','value', fill=subcatvar, color=subcatvar))
 
@@ -556,7 +558,7 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
           ylab(pltdata$Units) +
           scale_x_continuous(breaks = scales::pretty_breaks(n = 9))
 
-        if (is.null(plot_type) || plot_type == "stacked" || is.null(subcatvar)) {
+        if (is.null(plot_type) || plot_type == "stacked") {
           plt <- plt + geom_bar(stat='identity')
         } else if (plot_type == "line") {
           plt <- plt + geom_line(size = 1)
