@@ -388,8 +388,8 @@ getPlotData <- function(prjdata, query, pltscen, diffscen, key, percentileOrder,
 
         # Construct the new data frame.  We use the scenario name from the left
         # (dp) data frame.
-        tp <- dplyr::rename(joint.data, scenario=scenario.x, Units=Units.x) %>%
-           dplyr::select_(.dots=c('scenario', mergenames, 'Units')) %>% cbind(value)
+        tp <- dplyr::rename(joint.data, scenario=scenario.x, Units=Units.x, order=order.x) %>%
+           dplyr::select_(.dots=c('scenario', mergenames, 'Units', 'order')) %>% cbind(value)
     }
 
     ## If filtering is in effect, do it now
