@@ -26,6 +26,7 @@ shinyServer(function(input, output, session) {
     # getting hover values and for viewing the raw table data.
     timePlot.df <- reactiveVal()
     timePlot.plot_type <- reactiveVal()
+    timePlot.hasRegions <- reactiveVal()
 
     ## Get the new data file on upload
     rFileinfo <- reactive({
@@ -195,6 +196,7 @@ shinyServer(function(input, output, session) {
                         percentileColors)
         timePlot.df(plt$plotdata)
         timePlot.plot_type(plot_type)
+        timePlot.hasRegions(plt$hasRegions)
         plt$plot
     }
 
@@ -233,10 +235,7 @@ shinyServer(function(input, output, session) {
     })
 
     output$show_region_select <- reactive({
-        settings <- rFileinfo()$project.settings
-        query <- input$plotQuery
-        plot_type <- filter(settings, query == !!query)$type
-        plot_type != "percentile"
+        timePlot.hasRegions()
     })
 
     output$download_plot <- downloadHandler(

@@ -496,6 +496,12 @@ getScenarioNames <- function(scenarios)
   scenario_names
 }
 
+hasRegions <- function(prjdata, query, scen)
+{
+  regions <- prjdata[[scen]][[query]][["EPPA Region"]]
+  !any(is.na(regions))
+}
+
 
 #' Plot values over time as a bar chart
 #' @param prjdata A project data structure
@@ -586,7 +592,7 @@ plotTime <- function(prjdata, plot_type, query, scen, diffscen, subcatvar, filte
               scale_fill_manual(values = color_palette) +
               scale_color_manual(values = color_palette)
         }
-        return(list(plot = plt, plotdata = pltdata))
+        return(list(plot = plt, plotdata = pltdata, hasRegions = hasRegions(prjdata, query = query, scen = scen)))
     }
 }
 
