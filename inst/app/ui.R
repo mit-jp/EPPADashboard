@@ -27,7 +27,7 @@ shinyUI(fluidPage(theme="style.css",
       ),
       img(src = "EPPA_regions.png", width = "100%"),
       p(class = "blurb", "Visit the MIT website for the", a("full Outlook report", href = "https://globalchange.mit.edu/sites/default/files/newsletters/files/2021-JP-Outlook.pdf")),
-      p(class = "blurb", "Data is available to download in excel format")
+      p(class = "blurb", "Data is available to download in", a("excel format", href = "https://globalchange.mit.edu/Outlook2021/Scenarios"))
     ),
 
     # main display area
