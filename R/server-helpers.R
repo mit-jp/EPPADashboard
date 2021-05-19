@@ -38,9 +38,9 @@ loadDefault <- function(regionSettings)
 
 #' @export
 scenarioDescriptions <- list(
-  Paris_Forever = "Paris Nationally Determined Contribution (NDC) targets are met by all countries by 2030 and retained thereafter.",
+  Paris_Forever = "Current (as of March 2021) Paris Nationally Determined Contribution (NDC) targets are met by all countries by 2030 and retained thereafter",
   Paris_2C = "Paris Nationally Determined Contribution (NDC) targets are met by all countries by 2030, after which there is an emissions cap based on a global emissions trajectory designed to ensure that the 2100 global surface mean temperature does not exceed 2°C above pre-industrial levels with a 50% probability.",
-  Accelerated_Actions = "More near-term actions are taken relative to Paris 2°C, and global emissions are consistent with ensuring that the 2100 global surface mean temperature does not exceed 1.5°C above pre-industrial levels with a 50% probability. Note: Climate results are shown for a slightly different 1.5°C scenario (Paris 1.5°C) that uses a global emissions price."
+  `Accelerated_Actions_(1.5C)` = "More near-term actions are taken relative to Paris 2°C, and global emissions are consistent with ensuring that the 2100 global surface mean temperature does not exceed 1.5°C above pre-industrial levels with a 50% probability. Note: Climate results are shown for a slightly different 1.5°C scenario (Paris 1.5°C) that uses a global emissions price."
 )
 
 #' Load the default project file into the settings
