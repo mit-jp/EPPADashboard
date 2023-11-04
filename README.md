@@ -17,6 +17,17 @@ package, if you don't have it already.  You can do that by entering:
 install.packages('devtools')
 ```
 
+If on macOS you may need to do the following to get dev tools to install
+
+```sh
+brew install libgit2
+```
+
+```R
+install.packages("usethis", verbose=TRUE)
+install.packages('devtools')
+```
+
 Make yourself a cup of tea. It could take a while to compile all the devtools.
 
 Next, install the EPPAdashboard
