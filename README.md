@@ -30,6 +30,16 @@ install.packages('devtools')
 
 Make yourself a cup of tea. It could take a while to compile all the devtools.
 
+Next, install the archived rgdal package. It's required by gcammaptools but no longer available on CRAN.
+
+```sh
+brew install gdal # if on mac
+```
+
+```R
+install.packages("https://cran.r-project.org/src/contrib/Archive/rgdal/rgdal_1.6-7.tar.gz", repos=NULL, type="source")
+```
+
 Next, install the EPPAdashboard
 package:
 ```R
@@ -37,6 +47,8 @@ devtools::install_github('cypressf/EPPADashboard', ref = "climate-outlook-2023")
 ```
 This should install all of the required packages that the EPPA
 Dashboard needs to operate for you automatically.
+
+
 
 ## Usage
 
