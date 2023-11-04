@@ -43,7 +43,7 @@ install.packages("https://cran.r-project.org/src/contrib/Archive/rgdal/rgdal_1.6
 Next, install the EPPAdashboard
 package:
 ```R
-devtools::install_github('cypressf/EPPADashboard', ref = "climate-outlook-2023")
+devtools::install_github('mit-jp/EPPADashboard', ref = "climate-outlook-2023")
 ```
 This should install all of the required packages that the EPPA
 Dashboard needs to operate for you automatically.

@@ -22,7 +22,8 @@ Imports:
     fs (>= 1.3.2)
 Remotes:
     JGCRI/rgcam,
-    JGCRI/gcammaptools
+    JGCRI/gcammaptools,
+    mit-jp/EPPADashboard@climate-outlook-2023
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
