@@ -19,7 +19,7 @@ install.packages('devtools')
 Next, install the EPPAdashboard
 package:
 ```R
-devtools::install_github('cypressf/EPPADashboard', ref = "climate-outlook")
+devtools::install_github('cypressf/EPPADashboard', ref = "climate-outlook-2023")
 ```
 This should install all of the required packages that the EPPA
 Dashboard needs to operate for you automatically.
