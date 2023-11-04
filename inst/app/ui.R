@@ -10,7 +10,7 @@ shinyUI(fluidPage(theme="style.css",
       column(width = 10, h2("MIT Joint Program Outlook Dashboard")),
       column(width = 2, img(src = "joint-program-logo.jpg", height = "150px"))
     ),
-    windowTitle = "2021 Global Change Outlook"
+    windowTitle = "2023 Global Change Outlook"
   ),
 
   # Sidebar with user controls
