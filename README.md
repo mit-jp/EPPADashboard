@@ -16,6 +16,9 @@ package, if you don't have it already.  You can do that by entering:
 ```R
 install.packages('devtools')
 ```
+
+Make yourself a cup of tea. It could take a while to compile all the devtools.
+
 Next, install the EPPAdashboard
 package:
 ```R
