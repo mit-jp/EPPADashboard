@@ -53,7 +53,7 @@ Dashboard needs to operate for you automatically.
 ## Usage
 
 To run the EPPA Dashboard, from the R command console enter
-`EPPAdashboard::run()`.
+`GCAMdashboard::run()`.
 
 ### Uploading data
 
