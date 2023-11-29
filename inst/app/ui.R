@@ -7,7 +7,7 @@ shinyUI(fluidPage(theme="style.css",
   # Application title
   titlePanel(
     div(
-      column(width = 10, h2("This visualization tool will be updated soon for the 2023 MIT Global Change Outlook; please check back.")),
+      column(width = 10, h2("MIT Joint Program Outlook Dashboard")),
       column(width = 2, img(src = "joint-program-logo.jpg", height = "150px")),
     ),
     windowTitle = "2023 Global Change Outlook"
