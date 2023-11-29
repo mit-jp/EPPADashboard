@@ -7,8 +7,8 @@ shinyUI(fluidPage(theme="style.css",
   # Application title
   titlePanel(
     div(
-      column(width = 10, h2("MIT Joint Program Outlook Dashboard")),
-      column(width = 2, img(src = "joint-program-logo.jpg", height = "150px"))
+      column(width = 10, h2("This visualization tool will be updated soon for the 2023 MIT Global Change Outlook; please check back.")),
+      column(width = 2, img(src = "joint-program-logo.jpg", height = "150px")),
     ),
     windowTitle = "2023 Global Change Outlook"
   ),
@@ -26,8 +26,8 @@ shinyUI(fluidPage(theme="style.css",
         selectInput('diffScenario', 'Select Difference Scenario', choices=list())
       ),
       img(src = "EPPA_regions.png", width = "100%"),
-      p(class = "blurb", "Download the", a("full Outlook report", href = "https://globalchange.mit.edu/sites/default/files/newsletters/files/2021-JP-Outlook.pdf")),
-      p(class = "blurb", "Download", a("data for each scenario", href = "https://globalchange.mit.edu/Outlook2021"), "in Excel format")
+      p(class = "blurb", "Download the", a("full Outlook report", href = "https://globalchange.mit.edu/sites/default/files/newsletters/files/2023-JP-Outlook.pdf")),
+      p(class = "blurb", "Download", a("data for each scenario", href = "https://globalchange.mit.edu/publications/signature/2023-global-change-outlook"), "in Excel format")
     ),
 
     # main display area
